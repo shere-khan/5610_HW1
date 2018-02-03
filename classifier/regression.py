@@ -66,7 +66,6 @@ def read_file(input):
 if __name__ == '__main__':
     M = create_data(3, 4)
 
-    F = open()
     d_a = Vec_Data([4.1, -0.1, 2.2], None)
     d_b = Vec_Data([6.1, 0.4, 1.3], None)
     D = [d_a, d_b]
