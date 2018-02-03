@@ -1,29 +1,32 @@
 import math
 
 
-class Vector:
-    def __init__(self, vec, cls):
+class Vec_Data:
+    def __init__(self, vec, label):
         self.vec = vec
-        self.cls = cls
+        self.label = label
         self.dist = None
+
+    def __repr__(self):
+        return 'vector: {0}  dist: {1}  label: {2}'.format(self.vec, self.dist, self.label)
 
 
 def create_data(m, n):
-    M = [Vector([5.5, 0.5, 4.5], 2),
-         Vector([7.4, 1.1, 3.6], 0),
-         Vector([5.9, 0.2, 3.4], 2),
-         Vector([9.9, 0.1, 0.8], 0),
-         Vector([6.9, -0.1, 0.6], 2),
-         Vector([6.8, -0.3, 5.1], 2),
-         Vector([4.1, 0.3, 5.1], 1),
-         Vector([1.3, -0.2, 1.8], 1),
-         Vector([4.5, 0.4, 2.0], 0),
-         Vector([0.5, 0.0, 2.3], 1),
-         Vector([5.9, -0.1, 4.4], 0),
-         Vector([9.3, -0.2, 3.2], 0),
-         Vector([1.0, 0.1, 2.8], 1),
-         Vector([0.4, 0.1, 4.3], 1),
-         Vector([2.7, -0.5, 4.2], 1)]
+    M = [Vec_Data(vec=[5.5, 0.5, 4.5], label=2),
+         Vec_Data([7.4, 1.1, 3.6], 0),
+         Vec_Data([5.9, 0.2, 3.4], 2),
+         Vec_Data([9.9, 0.1, 0.8], 0),
+         Vec_Data([6.9, -0.1, 0.6], 2),
+         Vec_Data([6.8, -0.3, 5.1], 2),
+         Vec_Data([4.1, 0.3, 5.1], 1),
+         Vec_Data([1.3, -0.2, 1.8], 1),
+         Vec_Data([4.5, 0.4, 2.0], 0),
+         Vec_Data([0.5, 0.0, 2.3], 1),
+         Vec_Data([5.9, -0.1, 4.4], 0),
+         Vec_Data([9.3, -0.2, 3.2], 0),
+         Vec_Data([1.0, 0.1, 2.8], 1),
+         Vec_Data([0.4, 0.1, 4.3], 1),
+         Vec_Data([2.7, -0.5, 4.2], 1)]
 
     return M
 
@@ -44,21 +47,28 @@ def square_sum(x, y):
 def calc_maj(a):
     maj = [0, 0, 0]
     for i in ks_a:
-        if i.cls == 2:
+        if i.label == 2:
             maj[0] += 1
-        elif i.cls == 1:
+        elif i.label == 1:
             maj[1] += 1
-        elif i.cls == 0:
+        elif i.label == 0:
             maj[2] += 1
 
     return max(maj)
 
 
+def read_file(input):
+    f = open(input)
+    for line in f:
+        vec = line.split()
+
+
 if __name__ == '__main__':
     M = create_data(3, 4)
 
-    d_a = Vector([4.1, -0.1, 2.2], None)
-    d_b = Vector([6.1, 0.4, 1.3], None)
+    F = open()
+    d_a = Vec_Data([4.1, -0.1, 2.2], None)
+    d_b = Vec_Data([6.1, 0.4, 1.3], None)
     D = [d_a, d_b]
 
     for d in D:
@@ -68,5 +78,10 @@ if __name__ == '__main__':
             dists.append(m)
 
         dists.sort(key=lambda x: x.dist)
+        for di in dists:
+            print(di)
+        print()
         ks_a = dists[:3]
         class_a = calc_maj(ks_a)
+        print('test label {0}'.format(class_a))
+        print()
