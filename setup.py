@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='classifier',
       version='0.1',
@@ -6,5 +6,5 @@ setup(name='classifier',
       url='',
       author='Justin Barry',
       author_email='justin.barry.e@gmail.com',
-      packages=['classifier'],
+      packages=find_packages(),
       zip_safe=False)
