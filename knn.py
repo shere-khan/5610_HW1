@@ -32,7 +32,7 @@ class KNN:
 
     @staticmethod
     def create_data(m, n):
-        M = [VecData(vec=[5.5, 0.5, 4.5], label=2),
+        M = [VecData([5.5, 0.5, 4.5], 2),
              VecData([7.4, 1.1, 3.6], 0),
              VecData([5.9, 0.2, 3.4], 2),
              VecData([9.9, 0.1, 0.8], 0),
