@@ -112,13 +112,7 @@ class KNN:
             self.compare(class_a, d_v[1])
 
     def compare(self, pred, actual):
-        """
-        Updates the confusion matrix
-
-        :param pred:
-        :param actual:
-        :return:
-        """
+        # Updates the confusion matrix after comparing values
         if pred == actual:
             self.cm[pred - 1][actual - 1] += 1
         else:
