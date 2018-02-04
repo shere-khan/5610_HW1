@@ -193,7 +193,7 @@ if __name__ == '__main__':
     # Successively train against the training data and increase values of k
     scores = list()
     k = 1
-    for i in range(1):
+    for i in range(1):  # loop set to iterate only once for testing purposes
         knn = KNN()
         # Train: calculate distances, assign labels,
         # and compare result with original
