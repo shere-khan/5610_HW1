@@ -140,7 +140,7 @@ class KNN:
         return tps / (tps + fns)
 
     def f_measure_macro(self):
-        pass
+        return 0
 
 
 def problem2():
@@ -182,9 +182,13 @@ if __name__ == '__main__':
 
     data_v_copy = copy.deepcopy(data_v)
 
-    # Train: calculate distances, assign labels,
-    # and compare result with original
-    knn = KNN()
-    knn.train(data_t, data_v_copy, data_v, 1)
-
-    # print('incorrect: {0}'.format(num_off))
+    # Successively train against the training data and increase values of k
+    scores = list()
+    k = 1
+    for i in range(1):
+        knn = KNN()
+        # Train: calculate distances, assign labels,
+        # and compare result with original
+        knn.train(data_t, data_v_copy, data_v, k=k)
+        scores.append(knn.f_measure_macro())
+        k += 1
