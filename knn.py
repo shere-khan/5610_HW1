@@ -94,7 +94,8 @@ class KNN:
         """
 
         # The original validation data list is zipped together with the copied list
-        # so that the data can be compared side by side
+        # so that the data can be compared side by side. d_v[0] is the copied data,
+        # d_v[1] is the original data
         for d_v in zip(data_v_copy, data_v):
             dists = list()
             for d_t in data_t:
