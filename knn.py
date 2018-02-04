@@ -13,6 +13,7 @@ class VecData:
 
 class KNN:
     def __init__(self):
+        # cm: the confusion matrix, a global field
         self.cm = list()
         for i in range(9):
             self.cm.append([])
