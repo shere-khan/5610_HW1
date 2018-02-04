@@ -166,14 +166,17 @@ def problem2():
         print()
 
 
+def get_file_location(fn):
+    return os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(fn))) + '/' + fn
+
+
 if __name__ == '__main__':
     # problem2()
     l = ['validate.txt', 'train.txt']
     data = list()
     for fn in l:
-        __location__ = os.path.realpath(
-            os.path.join(os.getcwd(), os.path.dirname(fn))) + '/' + fn
-        f = open(__location__)
+        f = open(get_file_location(fn))
 
         data.append(KNN.read_data(f))
 
