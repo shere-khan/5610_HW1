@@ -83,6 +83,17 @@ class KNN:
             vec = line.split()
 
     def train(self, data_t, data_v_copy, data_v, k):
+        """
+        This method trains and compares the data at the same time.
+        :param data_t:
+        :param data_v_copy:
+        :param data_v:
+        :param k:
+        :return:
+        """
+
+        # The original validation data list is zipped together with the copied list
+        # so that the data can be compared side by side
         for d_v in zip(data_v_copy, data_v):
             dists = list()
             for d_t in data_t:
