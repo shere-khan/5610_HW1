@@ -11,17 +11,21 @@ class VecData:
         return 'vector: {0}  dist: {1}  label: {2}'.format(self.vec, self.dist, self.label)
 
 
-class kNN:
+class KNN:
     def __init__(self):
         self.cm = list()
+        for i in range(9):
+            self.cm.append([])
 
     @staticmethod
     def read_data(f):
         a = list()
+        label_set = set()
         for line in f:
             vec = line.split()
             vec = list(map(lambda x: int(x), vec))
             label = int(vec.pop(-1))
+            label_set.add(label)
             a.append(VecData(vec, label))
 
         return a
@@ -48,7 +52,7 @@ class kNN:
 
     @staticmethod
     def dist(x, y):
-        xy = math.sqrt(kNN.square_sum(x.vec, y.vec))
+        xy = math.sqrt(KNN.square_sum(x.vec, y.vec))
         return xy
 
     @staticmethod
@@ -78,58 +82,81 @@ class kNN:
         for line in f:
             vec = line.split()
 
-    @staticmethod
-    def train(data_t, data_v, k):
-        for d_v in data_v:
+    def train(self, data_t, data_v_copy, data_v, k):
+        for d_v in zip(data_v_copy, data_v):
             dists = list()
             for d_t in data_t:
-                d_t.dist = kNN.dist(d_v, d_t)
+                # Calculate the distance to each data point in the
+                # training set and add that represented value to a list
+                d_t.dist = KNN.dist(d_v[0], d_t)
                 dists.append(d_t)
 
-            ks_a = None
-            class_a = None
+            # Get the predicted value from the list computed above
             if k == 1:
                 class_a = max(dists, key=lambda x: x.label).label
             else:
                 dists.sort(key=lambda x: x.dist)
-                ks_a = dists[:3]
-                class_a = kNN.calc_maj(ks_a)
+                class_a = KNN.calc_maj(dists[:k])
 
-            d_v.label = class_a
+            # Compare the predicted value (class_a) to the actual
+            # value(d_v[1]) from the original validation data
+            self.compare(class_a, d_v[1])
 
-    @staticmethod
-    def compare(data_v, data_v_copy):
-        i = 0
-        for d_vc in data_v_copy:
-            for d_v in data_v:
-                if d_vc.label != d_v.label:
-                    i += 1
+    def compare(self, pred, actual):
+        if pred == actual:
+            self.cm[pred][actual] += 1
+        else:
+            self.cm[pred][pred] += 1
 
-        return i
+    def precision_macro(self):
+        pass
+
+    def recall_macro(self):
+        pass
+
+    def recall_micro(self):
+        # Compute TPs and FNs across all labels
+        tps = None
+        fns = None
+        for i in range(len(self.cm)):
+            row = self.cm[i]
+            for j in range(len(row)):
+                if i == j:
+                    tps += self.cm[i][j]
+                else:
+                    fns += self.cm[i][j]
+
+        return tps / (tps + fns)
+
+    def f_measure_macro(self):
+        pass
+
+
+def problem2():
+    M = KNN.create_data(3, 4)
+
+    d_a = VecData([4.1, -0.1, 2.2], None)
+    d_b = VecData([6.1, 0.4, 1.3], None)
+    D = [d_a, d_b]
+
+    for d in D:
+        dists = list()
+        for m in M:
+            m.dist = KNN.dist(d, m)
+            dists.append(m)
+
+        dists.sort(key=lambda x: x.dist)
+        # for di in dists:
+        #     print(di)
+        print()
+        ks_a = dists[:3]
+        class_a = KNN.calc_maj(ks_a)
+        print('test label {0}'.format(class_a))
+        print()
 
 
 if __name__ == '__main__':
-    # M = create_data(3, 4)
-    #
-    # d_a = VecData([4.1, -0.1, 2.2], None)
-    # d_b = VecData([6.1, 0.4, 1.3], None)
-    # D = [d_a, d_b]
-    #
-    # for d in D:
-    #     dists = list()
-    #     for m in M:
-    #         m.dist = dist(d, m)
-    #         dists.append(m)
-    #
-    #     dists.sort(key=lambda x: x.dist)
-    #     # for di in dists:
-    #     #     print(di)
-    #     print()
-    #     ks_a = dists[:3]
-    #     class_a = calc_maj(ks_a)
-    #     print('test label {0}'.format(class_a))
-    #     print()
-
+    # problem2()
     l = ['validate.txt', 'train.txt']
     data = list()
     for fn in l:
@@ -137,16 +164,16 @@ if __name__ == '__main__':
             os.path.join(os.getcwd(), os.path.dirname(fn))) + '/' + fn
         f = open(__location__)
 
-        data.append(kNN.read_data(f))
+        data.append(KNN.read_data(f))
 
     data_v = data[0]
     data_t = data[1]
 
     data_v_copy = copy.deepcopy(data_v)
 
-    kNN.train(data_t, data_v_copy, 1)
-    print('done')
-    exit()
-    num_off = kNN.compare(data_v, data_v_copy)
+    # Train: calculate distances, assign labels,
+    # and compare result with original
+    knn = KNN()
+    knn.train(data_t, data_v_copy, data_v, 1)
 
-    print('incorrect: {0}'.format(num_off))
+    # print('incorrect: {0}'.format(num_off))
