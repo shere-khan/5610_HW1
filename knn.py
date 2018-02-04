@@ -17,6 +17,8 @@ class KNN:
         self.cm = list()
         for i in range(9):
             self.cm.append([])
+            for j in range(9):
+                self.cm[i].append(0)
 
     @staticmethod
     def read_data(f):
@@ -77,12 +79,6 @@ class KNN:
 
         return max(maj)
 
-    @staticmethod
-    def read_file(input):
-        f = open(input)
-        for line in f:
-            vec = line.split()
-
     def train(self, data_t, data_v_copy, data_v, k):
         """
         This method trains and compares the data at the same time.
@@ -116,10 +112,17 @@ class KNN:
             self.compare(class_a, d_v[1])
 
     def compare(self, pred, actual):
+        """
+        Updates the confusion matrix
+
+        :param pred:
+        :param actual:
+        :return:
+        """
         if pred == actual:
-            self.cm[pred][actual] += 1
+            self.cm[pred - 1][actual - 1] += 1
         else:
-            self.cm[pred][pred] += 1
+            self.cm[pred - 1][pred - 1] += 1
 
     def precision_macro(self):
         pass
