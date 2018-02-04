@@ -182,7 +182,6 @@ if __name__ == '__main__':
     data = list()
     for fn in l:
         f = open(get_file_location(fn))
-
         data.append(KNN.read_data(f))
 
     data_v = data[0]
