@@ -122,6 +122,8 @@ class KNN:
         pass
 
     def recall_macro(self):
+        tp_a = None
+        fn_a = None
         pass
 
     def recall_micro(self):
@@ -185,11 +187,9 @@ if __name__ == '__main__':
 
     # Successively train against the training data and increase values of k
     scores = list()
-    k = 1
-    for i in range(1):  # loop set to iterate only once for testing purposes
+    for k in range(1):  # loop set to iterate only once for testing purposes
         knn = KNN()
         # Train: calculate distances, assign labels,
         # and compare result with original
-        knn.train(data_t, data_v_copy, data_v, k=k)
+        knn.train(data_t, data_v_copy, data_v, k)
         scores.append(knn.f_measure_macro())
-        k += 1
