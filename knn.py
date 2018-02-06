@@ -1,4 +1,4 @@
-import math, os, copy, numpy
+import math, os, copy, numpy, operator
 
 
 class VecData:
@@ -8,14 +8,14 @@ class VecData:
         self.dist = None
 
     def __repr__(self):
-        return 'vector: {0}  dist: {1}  label: {2}'.format(self.vec, self.dist, self.label)
+        return 'dist: {1}  label: {2}'.format(self.vec, self.dist, self.label)
 
 
 class KNN:
     def __init__(self):
-        self.accuracy = 0
         self.correct = 0
         self.incorrect = 0
+
         # cm: the confusion matrix, a global field
         self.cm = list()
         for i in range(9):
@@ -32,7 +32,7 @@ class KNN:
             vec = list(map(lambda x: int(x), vec))
             label = int(vec.pop(-1))
             label_set.add(label)
-            a.append(VecData(vec, label))
+            a.append(VecData(numpy.asarray(vec), label))
 
         return a
 
@@ -58,8 +58,7 @@ class KNN:
 
     @staticmethod
     def dist(x, y):
-        xy = math.sqrt(KNN.square_sum(x.vec, y.vec))
-        return xy
+        return numpy.linalg.norm(x.vec - y.vec)
 
     @staticmethod
     def square_sum(x, y):
@@ -69,34 +68,13 @@ class KNN:
 
         return tot
 
-    @staticmethod
-    def calc_maj(ks_a):
-        maj = [0, 0, 0]
-        for i in ks_a:
-            if i.label == 2:
-                maj[0] += 1
-            elif i.label == 1:
-                maj[1] += 1
-            elif i.label == 0:
-                maj[2] += 1
-
-        return max(maj)
-
     def train(self, data_t, data_v_copy, data_v, k):
-        """
-        This method trains and compares the data at the same time.
-        :param data_t:
-        :param data_v_copy:
-        :param data_v:
-        :param k:
-        :return:
-        """
-
         # The original validation data list is zipped together with the copied list
         # so that the data can be compared side by side. d_v[0] is the copied data,
         # d_v[1] is the original data
         for d_v in zip(data_v_copy, data_v):
             dists = list()
+            # aset = set()
             for d_t in data_t:
                 # Calculate the distance to each data point in the
                 # training set and add that represented value to a list
@@ -104,15 +82,27 @@ class KNN:
                 dists.append(d_t)
 
             # Get the predicted value from the list computed above
-            if k == 1:
-                class_a = max(dists, key=lambda x: x.label).label
-            else:
-                dists.sort(key=lambda x: x.dist)
-                class_a = KNN.calc_maj(dists[:k])
+            class_a = KNN.prediction(dists, k)
 
             # Compare the predicted value (class_a) to the actual
             # value(d_v[1]) from the original validation data
-            self.compare(class_a, d_v[1])
+            self.compare(class_a, d_v[1].label)
+
+    @staticmethod
+    def prediction(l, k):
+        l.sort(key=lambda x: x.dist)
+        class_a = KNN.calc_maj(l[:k])
+
+        return class_a
+
+    @staticmethod
+    def calc_maj(ks_a):
+        maj = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
+               7: 0, 8: 0, 9: 0}
+        for i in ks_a:
+            maj[i.label] += 1
+
+        return numpy.argmax(list(maj.values()))
 
     def compare(self, pred, actual):
         # Updates the confusion matrix after comparing values
@@ -148,6 +138,9 @@ class KNN:
     def f_measure_macro(self):
         return 0
 
+    def accuracy(self):
+        return self.correct / (self.incorrect + self.correct)
+
 
 def problem2():
     M = KNN.create_data(3, 4)
@@ -163,8 +156,6 @@ def problem2():
             dists.append(m)
 
         dists.sort(key=lambda x: x.dist)
-        # for di in dists:
-        #     print(di)
         print()
         ks_a = dists[:3]
         class_a = KNN.calc_maj(ks_a)
@@ -184,17 +175,28 @@ if __name__ == '__main__':
     for fn in l:
         f = open(get_file_location(fn))
         data.append(KNN.read_data(f))
+        f.close()
 
     data_v = data[0]
     data_t = data[1]
 
     data_v_copy = copy.deepcopy(data_v)
 
+    # Open output file for writing accuracy for trials of k
+    out = open('out.txt', 'w')
+
     # Successively train against the training data and increase values of k
     scores = list()
-    for k in range(1):  # loop set to iterate only once for testing purposes
+    for k in range(1, 20):  # loop set to iterate only once for testing purposes
+        print('k: ' + str(k))
         knn = KNN()
+
         # Train: calculate distances, assign labels,
         # and compare result with original
         knn.train(data_t, data_v_copy, data_v, k)
-        scores.append(knn.f_measure_macro())
+        acc = knn.accuracy()
+        out.write(str(acc) + '\n')
+        out.flush()
+
+    out.close()
+    print('done')
