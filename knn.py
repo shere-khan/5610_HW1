@@ -26,12 +26,10 @@ class KNN:
     @staticmethod
     def read_data(f):
         a = list()
-        label_set = set()
         for line in f:
             vec = line.split()
             vec = list(map(lambda x: int(x), vec))
             label = int(vec.pop(-1))
-            label_set.add(label)
             a.append(VecData(numpy.asarray(vec), label))
 
         return a
@@ -70,8 +68,7 @@ class KNN:
 
     def train(self, data_t, data_v_copy, data_v, k):
         # The original validation data list is zipped together with the copied list
-        # so that the data can be compared side by side. d_v[0] is the copied data,
-        # d_v[1] is the original data
+        # so that the data can be compared side by side.
         for d_v in zip(data_v_copy, data_v):
             dists = list()
             # aset = set()
