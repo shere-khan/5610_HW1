@@ -1,4 +1,4 @@
-import math, os, copy
+import math, os, copy, numpy
 
 
 class VecData:
@@ -13,6 +13,9 @@ class VecData:
 
 class KNN:
     def __init__(self):
+        self.accuracy = 0
+        self.correct = 0
+        self.incorrect = 0
         # cm: the confusion matrix, a global field
         self.cm = list()
         for i in range(9):
@@ -114,8 +117,10 @@ class KNN:
     def compare(self, pred, actual):
         # Updates the confusion matrix after comparing values
         if pred == actual:
+            self.correct += 1
             self.cm[pred - 1][actual - 1] += 1
         else:
+            self.incorrect += 1
             self.cm[pred - 1][pred - 1] += 1
 
     def precision_macro(self):
