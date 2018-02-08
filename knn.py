@@ -67,22 +67,14 @@ class KNN:
         return tot
 
     def train(self, data_t, data_v_copy, data_v, k):
-        # The original validation data list is zipped together with the copied list
-        # so that the data can be compared side by side.
+        dists_s = list()
         for d_v in zip(data_v_copy, data_v):
             dists = list()
-            # aset = set()
             for d_t in data_t:
-                # Calculate the distance to each data point in the
-                # training set and add that represented value to a list
                 d_t.dist = KNN.dist(d_v[0], d_t)
                 dists.append(d_t)
-
-            # Get the predicted value from the list computed above
+            dists_s.append(dists)
             class_a = KNN.prediction(dists, k)
-
-            # Compare the predicted value (class_a) to the actual
-            # value(d_v[1]) from the original validation data
             self.compare(class_a, d_v[1].label)
 
     @staticmethod
