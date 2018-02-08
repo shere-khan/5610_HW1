@@ -66,31 +66,24 @@ class KNN:
 
         return tot
 
-    def get_distances(self, data_t, data_v):
-        dists_s = list()
-        for d_v in data_v:
+    def train(self, data_t, data_v_copy, data_v, k):
+        # The original validation data list is zipped together with the copied list
+        # so that the data can be compared side by side.
+        for d_v in zip(data_v_copy, data_v):
             dists = list()
+            # aset = set()
             for d_t in data_t:
-                d_t.dist = KNN.dist(d_v, d_t)
+                # Calculate the distance to each data point in the
+                # training set and add that represented value to a list
+                d_t.dist = KNN.dist(d_v[0], d_t)
                 dists.append(d_t)
-            dists_s.append(dists)
 
-        return dists_s
+            # Get the predicted value from the list computed above
+            class_a = KNN.prediction(dists, k)
 
-    def train(self, dists_s, data_v, k, out):
-        for k in range(1, k):
-            print('k: ' + str(k))
-            for dists_val in zip(dists_s, data_v):
-                class_a = KNN.prediction(dists_val[0], k)
-                self.compare(class_a, dists_val[1].label)
-
-            acc = self.accuracy()
-            out.write('acc: ' + str(acc) + '\n')
-            out.flush()
-            print('acc: ' + str(acc))
-
-            self.incorrect = 0
-            self.correct = 0
+            # Compare the predicted value (class_a) to the actual
+            # value(d_v[1]) from the original validation data
+            self.compare(class_a, d_v[1].label)
 
     @staticmethod
     def prediction(l, k):
@@ -175,7 +168,6 @@ def get_file_location(fn):
 if __name__ == '__main__':
     # problem2()
     l = ['validate.txt', 'train.txt']
-    # l = ['validate_cp.txt', 'train_cp.txt']
     data = list()
     for fn in l:
         f = open(get_file_location(fn))
@@ -185,21 +177,22 @@ if __name__ == '__main__':
     data_v = data[0]
     data_t = data[1]
 
+    data_v_copy = copy.deepcopy(data_v)
+
+    # Open output file for writing accuracy for trials of k
+    out = open('out.txt', 'w')
+
     # Successively train against the training data and increase values of k
     scores = list()
+    for k in range(1, 20):  # loop set to iterate only once for testing purposes
+        print('k: ' + str(k))
+        knn = KNN()
 
-    # train
-    knn = KNN()
-    dists_s = knn.get_distances(data_t, data_v)
-    print('distances collected')
-    out = open('out2.txt', 'w')
-
-    for dists1 in dists_s:
-        for dists2 in dists_s:
-            for (d1, d2) in zip(dists1, dists2):
-                if d1.dist != d2.dist:
-                    print('success')
-
-    # knn.train(dists_s, data_v, 20, out)
+        # Train: calculate distances, assign labels,
+        # and compare result with original
+        knn.train(data_t, data_v_copy, data_v, k)
+        acc = knn.accuracy()
+        out.write(str(acc) + '\n')
+        out.flush()
 
     out.close()
