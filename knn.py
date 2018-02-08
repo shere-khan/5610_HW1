@@ -101,6 +101,14 @@ class KNN:
 
         return numpy.argmax(list(maj.values()))
 
+    @staticmethod
+    def avg(ks_a):
+        tot = 0
+        for elem in ks_a:
+            tot += elem.label
+
+        return tot / len(ks_a)
+
     def compare(self, pred, actual):
         # Updates the confusion matrix after comparing values
         if pred == actual:
@@ -142,8 +150,8 @@ class KNN:
 def problem2():
     M = KNN.create_data(3, 4)
 
-    d_a = VecData([4.1, -0.1, 2.2], None)
-    d_b = VecData([6.1, 0.4, 1.3], None)
+    d_a = VecData(numpy.asarray([4.1, -0.1, 2.2]), None)
+    d_b = VecData(numpy.asarray([6.1, 0.4, 1.3]), None)
     D = [d_a, d_b]
 
     for d in D:
@@ -154,9 +162,13 @@ def problem2():
 
         dists.sort(key=lambda x: x.dist)
         print()
+
         ks_a = dists[:3]
         class_a = KNN.calc_maj(ks_a)
-        print('test label {0}'.format(class_a))
+        avg = KNN.avg(ks_a)
+
+        print('test label {0} maj: '.format(class_a))
+        print('test label {0} avg: '.format(avg))
         print()
 
 
@@ -166,33 +178,35 @@ def get_file_location(fn):
 
 
 if __name__ == '__main__':
-    # problem2()
-    l = ['validate.txt', 'train.txt']
-    data = list()
-    for fn in l:
-        f = open(get_file_location(fn))
-        data.append(KNN.read_data(f))
-        f.close()
-
-    data_v = data[0]
-    data_t = data[1]
-
-    data_v_copy = copy.deepcopy(data_v)
-
-    # Open output file for writing accuracy for trials of k
-    out = open('out.txt', 'w')
-
-    # Successively train against the training data and increase values of k
-    scores = list()
-    for k in range(1, 20):  # loop set to iterate only once for testing purposes
-        print('k: ' + str(k))
-        knn = KNN()
-
-        # Train: calculate distances, assign labels,
-        # and compare result with original
-        knn.train(data_t, data_v_copy, data_v, k)
-        acc = knn.accuracy()
-        out.write(str(acc) + '\n')
-        out.flush()
-
-    out.close()
+    problem2()
+    # l = ['validate.txt', 'train.txt']
+    # data = list()
+    # for fn in l:
+    #     f = open(get_file_location(fn))
+    #     data.append(KNN.read_data(f))
+    #     f.close()
+    #
+    # data_v = data[0]
+    # data_t = data[1]
+    #
+    # data_v_copy = copy.deepcopy(data_v)
+    #
+    # # Open output file for writing accuracy for trials of k
+    # out = open('out.txt', 'w')
+    #
+    # # Successively train against the training data and increase values of k
+    # scores = list()
+    # for k in range(1, 50):  # loop set to iterate only once for testing purposes
+    #     print('k: ' + str(k))
+    #     knn = KNN()
+    #
+    #     # Train: calculate distances, assign labels,
+    #     # and compare result with original
+    #     knn.train(data_t, data_v_copy, data_v, k)
+    #     acc = knn.accuracy()
+    #     knn.correct = 0
+    #     knn.incorrect = 0
+    #     out.write("k: {0} acc: {1}\n".format(k, str(acc)))
+    #     out.flush()
+    #
+    # out.close()
