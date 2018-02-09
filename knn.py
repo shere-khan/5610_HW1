@@ -1,4 +1,4 @@
-import math, os, copy, numpy, operator
+import math, os, copy, numpy, sys
 
 
 class VecData:
@@ -178,35 +178,37 @@ def get_file_location(fn):
 
 
 if __name__ == '__main__':
-    problem2()
-    # l = ['validate.txt', 'train.txt']
-    # data = list()
-    # for fn in l:
-    #     f = open(get_file_location(fn))
-    #     data.append(KNN.read_data(f))
-    #     f.close()
-    #
-    # data_v = data[0]
-    # data_t = data[1]
-    #
-    # data_v_copy = copy.deepcopy(data_v)
-    #
-    # # Open output file for writing accuracy for trials of k
-    # out = open('out.txt', 'w')
-    #
-    # # Successively train against the training data and increase values of k
-    # scores = list()
-    # for k in range(1, 50):  # loop set to iterate only once for testing purposes
-    #     print('k: ' + str(k))
-    #     knn = KNN()
-    #
-    #     # Train: calculate distances, assign labels,
-    #     # and compare result with original
-    #     knn.train(data_t, data_v_copy, data_v, k)
-    #     acc = knn.accuracy()
-    #     knn.correct = 0
-    #     knn.incorrect = 0
-    #     out.write("k: {0} acc: {1}\n".format(k, str(acc)))
-    #     out.flush()
-    #
-    # out.close()
+    # problem2()
+
+    data = list()
+
+    file_train = 'train.txt'
+    f = open(get_file_location(file_train))
+    data.append(KNN.read_data(f))
+    f.close()
+
+    file_name = sys.argv[1]
+    f = open(file_name)
+    data.append(KNN.read_data(f))
+    f.close()
+
+    data_v = data[0]
+    data_t = data[1]
+
+    data_v_copy = copy.deepcopy(data_v)
+
+    # Successively train against the training data and increase values of k
+    scores = list()
+
+    knn = KNN()
+    k = 1
+
+    # Train: calculate distances, assign labels,
+    # and compare result with original
+    knn.train(data_t, data_v_copy, data_v, k)
+    acc = knn.accuracy()
+    knn.correct = 0
+    knn.incorrect = 0
+
+    print("k: {0} acc: {1}\n".format(k, str(acc)))
+
